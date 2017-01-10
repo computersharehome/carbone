@@ -10,12 +10,14 @@
         "breeze.modelLibrary.backbone": "Scripts/lib/breeze/breeze.modelLibrary.backbone",
         "jquery": "Scripts/lib/jquery/jquery-1.10.2",
         "jQuery": "Scripts/lib/jquery/jquery-1.10.2",
+        "jquery.linq": "Scripts/lib/linq/jquery.linq",
         "jqx-all": "Scripts/lib/jqwidgets/jqx-all",
         "knockout": "Scripts/lib/knockout/knockout-3.2.0",
         "knockout-projections": "Scripts/lib/knockout/knockout-projections.min",
         "knockout-x-editable": "Scripts/lib/knockout-x-editable/knockout.x-editable",
         "knockout-validation": "Scripts/lib/knockout-validation/knockout.validation",
         "koGrid": "Scripts/lib/koGrid/koGrid-2.1.1",
+        "linq": "Scripts/lib/linq/linq",
         "mockjax": "Scripts/lib/mockjax/jquery.mockjax",
         "modernizr": "Scripts/lib/modernizr/modernizr-2.6.2",
         "Q": "Scripts/lib/q/q.min",
@@ -40,18 +42,24 @@
 		},
     shim: {
         "backbone": {
-            export: "backbone",
+            export: "Backbone",
             deps: ["jquery", "underscore"]
         },
         "bootstrap": {
             deps: ["jquery"]
         },
         "breeze": {
-            deps: ["Q"]
+            deps: ["Q", "knockout"]
+        },
+        "jquery.linq": {
+            deps: ["jQuery"]
         },
         "jqx-all": {
             export: "$",
             deps: ["jquery", "knockout", "app"]
+        },
+        "linq": {
+            export: "Enumerable"
         }
     }
 }

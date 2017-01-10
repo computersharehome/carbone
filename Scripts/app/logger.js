@@ -7,14 +7,20 @@
     toastr.options.timeOut = 1500; // toast timeout
     toastr.options.positionClass = 'toast-top-right';
 
+    var logCounter = 1;
     var logger = {
         error: error,
+        validationError: validationError,
         info: info,
         success: success,
         warning: warning,
-        log: log // straight to console; bypass toast
+        log: log, // straight to console; bypass toast
+        logToPage: logToPage // straight to page; bypass toast
     };
 
+    function validationError(message) {
+        log("log-validation-error", message);
+    };
     function error(message, title) {
         toastr.error(message, title);
         log("Error: " + message);
@@ -37,6 +43,11 @@
     function log() {
         var console = window.console;
         !!console && console.log && console.log.apply && console.log.apply(console, arguments);
+    }
+    function logToPage(message) {
+        var logmessage = "<div class='" + "log-info" + "'>" +
+            logCounter++ + ": " + message + "</div>";
+        $("#logmessages").append(logmessage);
     }
 	
     return logger;

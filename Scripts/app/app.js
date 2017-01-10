@@ -1,95 +1,6 @@
-﻿require(["logger", "notifier", "dataservice", "jQuery", "jqx-all"], function(logger, notifier, dataservice) {
-
-	window.app = {
-		data: {}
-	};
-	
-	// Initialize the model
-	var filterModel = new Backbone.Model();
-	filterModel.set({
-	    'actions': ['Sell'],
-	    'orderType': 'Limit',
-		'title': 'Balnk'
-	});
-
-	// Define views
-	var FilterView = Backbone.View.extend({
-	    bindings: {
-	        '.action': 'actions',
-	        '.order-type': 'orderType',
-			'#text-value': 'title'
-	    },
-	    render: function () {
-	        this.stickit();
-	    }
-	});
-
-	var OutputView = Backbone.View.extend({
-	    initialize: function () {
-	        this.model.on('change', this.render);
-	    },
-	    render: function () {
-	        var obj = this.model || this; // investigat: why in IE and old Chrome, *this* is model itself but not view in event handling
-	        var data = obj.toJSON();
-	        $('#actions-value').html(JSON.stringify(data.actions));
-	        $('#order-type-value').html(JSON.stringify(data.orderType));
-	        $('#title-value').html(JSON.stringify(data.title));
-	    }
-	});
-
-	// Instantiate and render views
-	var filterView = new FilterView({
-	    model: filterModel,
-	    el: '#filter'
-	});
-	
-	
-	var outputView = new OutputView({
-	    model: filterModel,
-	    el: '#output'
-	});
-		
-	filterView.render();
-	outputView.render();
-
-	function handleCarsLoadedEvent(event){
-	    alert(app.data.cars.length);
-		//alert(cars.toJSON());
-	};
-
-	notifier.addListener("carsLoaded", handleCarsLoadedEvent);
-	
-    // Get templates
-    var content = $("#content");
-    var carTemplateSource = $("#car-template").html();
-	
-    // Car BB View (extended by stickit)
-    var CarView = Backbone.View.extend({
-        bindings: {
-            '#make-input': 'make',
-            '#model-input': 'model',
-            '#make-desc': 'make',
-            '#model-desc': 'model',
-        },
-        events: {
-            //"click #options": "showOptions"
-        },
-        render: function() {
-            this.$el.html(carTemplateSource);
-            this.stickit();
-            return this;
-        },
-        renderOptions: function() {
-        },
-        // A toggle to hide/show options
-        // will load options from db if not already loaded
-        showOptions: function () {
-            var self = this;
-        }
-    });
+﻿require(["logger", "notifier", "dataservice", "UUID", "linq", "jQuery", "jqx-all"], function(logger, notifier, dataservice, UUID) {
 
     var getCars = function() {
-        content.empty();
         dataservice.getCars()
             .then(gotCars);
 
@@ -97,8 +8,19 @@
         	  app.data.cars = cars;
             cars.forEach(// show cars
                 function(car) {
-                    var view = new CarView({ model: car });
-                    content.append(view.render().el);
+                });
+            //enableSave();
+        } 
+    };
+
+    var getOptions = function() {
+        dataservice.getOptions()
+            .then(gotOptions);
+
+        function gotOptions(options) {
+        	  app.data.options = options;
+            options.forEach(// show options
+                function(option) {
                 });
             enableSave();
         } 
@@ -115,6 +37,29 @@
         enableSave.initialized = true;
     };
 
+		var jsonArray;
+		
+		function handleCarsLoadedEvent(event){
+		    logger.logToPage(JSON.stringify(app.data.cars));
+		    jsonArray = app.data.cars;
+				var queryResult = Enumerable.From(jsonArray)
+		    .Where(function (x) { return x.attributes.make !== 'Toyota' })
+		    .OrderBy(function (x) { return x.attributes.make })
+		    .Select(function (x) { return x.attributes })
+		    .ToArray();
+		    
+				logger.log(queryResult);
+		};
+	
+		notifier.addListener("carsLoaded", handleCarsLoadedEvent);
+		
+		function handleOptionsLoadedEvent(event){
+		    //logger.logToPage(JSON.stringify(app.data.options));
+		};
+	
+		notifier.addListener("optionsLoaded", handleOptionsLoadedEvent);
+		
     getCars(); 
-    
+    getOptions(); 
+		
 });
