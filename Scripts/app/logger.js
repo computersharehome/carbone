@@ -45,7 +45,7 @@
         !!console && console.log && console.log.apply && console.log.apply(console, arguments);
     }
     function logToPage(message) {
-        var logmessage = "<div class='" + "log-info" + "'>" +
+        var logmessage = "<div class='" + "log-warning" + "'>" +
             logCounter++ + ": " + message + "</div>";
         $("#logmessages").append(logmessage);
     }

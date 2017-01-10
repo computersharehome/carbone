@@ -31,7 +31,7 @@
         
         function querySucceeded(data) {
         	  app.data.cars = data.results;
-            logger.logToPage("fetched cars");
+            logger.success("fetched cars");
             notifier.notify("carsLoaded");
             return data.results;
         }
@@ -47,7 +47,7 @@
         
         function querySucceeded(data) {
         	  app.data.options = data.results;
-            logger.logToPage("fetched options");
+            logger.success("fetched options");
             notifier.notify("optionsLoaded");
             return data.results;
         }
